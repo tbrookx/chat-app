@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CHAT</title>
+<title>💻 chat</title>
 <style>
-  /* Base body - retro pastel, slightly metallic */
   body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(145deg, #b3cde0, #f3f3f3);
@@ -99,11 +98,10 @@
     background: linear-gradient(145deg, #ffffff, #d0d0ff);
     transform: scale(1.03);
   }
-
 </style>
 </head>
 <body>
-<h2>CHAT</h2>
+<h2>💻 chatt</h2>
 <div id="chat-box"></div>
 <div>
   <input id="name" placeholder="Name">
@@ -115,7 +113,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
-// 🔑 Your Firebase config
+// 🔑 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCJi_zoww9atKKyXE2f1_Pbt0oq0ZIhJmM",
   authDomain: "deviascope-chat-app.firebaseapp.com",
@@ -131,14 +129,30 @@ const db = getDatabase(app);
 const messagesRef = ref(db, "messages");
 const chatBox = document.getElementById("chat-box");
 
+// Replace this with your secret key
+const OWNER_KEY = "YOUR_SECRET_KEY"; 
+
 window.sendMessage = function() {
-  const name = document.getElementById("name").value || "Anon";
+  const reservedNames = ["eros", "erostaylor", "eros taylor", "honeyvelvet"];
+  let name = document.getElementById("name").value.trim() || "Anon";
   const message = document.getElementById("message").value;
-  if(message.trim() !== "") {
+
+  const nameLower = name.toLowerCase();
+
+  // Reserved name check
+  if (reservedNames.includes(nameLower)) {
+    const key = prompt("Enter owner key to use this name:");
+    if (key !== 502) {
+      alert("This name is reserved. You cannot use it.");
+      return;
+    }
+  }
+
+  if (message.trim() !== "") {
     push(messagesRef, { name, message });
     document.getElementById("message").value = "";
   }
-}
+};
 
 onChildAdded(messagesRef, (data) => {
   const msg = data.val();
