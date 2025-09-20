@@ -16,12 +16,19 @@
     margin: 0;
   }
 
+  /* Pulse animation for chat window */
+  @keyframes pulse-glow {
+    0% { box-shadow: 4px 4px 0 #000, 0 0 10px rgba(255,182,255,0.3); }
+    50% { box-shadow: 4px 4px 0 #000, 0 0 25px rgba(255,182,255,0.6); }
+    100% { box-shadow: 4px 4px 0 #000, 0 0 10px rgba(255,182,255,0.3); }
+  }
+
   #chat-window {
     width: 380px;
     border: 2px solid #000;
     background: #c0c0c0;
-    box-shadow: 4px 4px 0 #000;
     padding: 0;
+    animation: pulse-glow 2s infinite;
   }
 
   #title-bar {
