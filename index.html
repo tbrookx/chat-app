@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>✨ CHAT ✨</title>
@@ -48,7 +48,6 @@
       color: #f8f8ff;
       font-size: 0.9rem;
       overflow: hidden;
-      animation: shimmer 1.5s ease forwards;
     }
 
     .message::after {
@@ -111,13 +110,12 @@
   <input id="message" placeholder="Type a message...">
   <button onclick="sendMessage()">Send</button>
 
-  <!-- Firebase + JS with Analytics -->
+  <!-- Firebase + JS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
-    // Firebase config
+    // 🔑 Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCJi_zoww9atKKyXE2f1_Pbt0oq0ZIhJmM",
       authDomain: "deviascope-chat-app.firebaseapp.com",
@@ -129,7 +127,6 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app); // Optional analytics
     const db = getDatabase(app);
     const messagesRef = ref(db, "messages");
     const chatBox = document.getElementById("chat-box");
