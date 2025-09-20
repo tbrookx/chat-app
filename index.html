@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <title>🖥️ Chat</title>
 <style>
-  /* Body & page */
   body {
     font-family: "MS Sans Serif", Geneva, sans-serif;
-    background: #0077B6; /* classic teal desktop background */
+    background: #0077B6;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -17,7 +16,6 @@
     margin: 0;
   }
 
-  /* Chat window container */
   #chat-window {
     width: 380px;
     border: 2px solid #000;
@@ -26,7 +24,6 @@
     padding: 0;
   }
 
-  /* Title bar */
   #title-bar {
     background: linear-gradient(to right, #000080, #0000ff);
     color: #fff;
@@ -37,7 +34,6 @@
     user-select: none;
   }
 
-  /* Chat messages area */
   #chat-box {
     width: 100%;
     height: 300px;
@@ -62,7 +58,6 @@
     color: #000080;
   }
 
-  /* Input area */
   #input-area {
     display: flex;
     padding: 5px;
@@ -133,9 +128,9 @@ const messagesRef = ref(db, "messages");
 const chatBox = document.getElementById("chat-box");
 
 // Reserved names owner key
-const OWNER_KEY = "502"; 
+const OWNER_KEY = "502";
 
-// Helper: normalize names (remove spaces & special chars, lowercase)
+// Helper: normalize names
 function normalizeName(name) {
   return name.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
@@ -147,16 +142,16 @@ window.sendMessage = function() {
   const nameNormalized = normalizeName(name);
 
   // Reserved name check
-  if(reservedNames.includes(nameNormalized)) {
+  if (reservedNames.includes(nameNormalized)) {
     let key = prompt("Enter owner key to use this name:") || "";
-    key = key.trim(); // remove spaces
-    if(String(key) !== String(OWNER_KEY)) { // force string comparison
+    key = key.trim();
+    if (key !== OWNER_KEY) {
       alert("This name is reserved. You cannot use it.");
       return;
     }
   }
 
-  if(message.trim() !== "") {
+  if (message.trim() !== "") {
     push(messagesRef, { name, message });
     document.getElementById("message").value = "";
   }
