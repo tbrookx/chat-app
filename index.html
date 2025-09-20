@@ -139,14 +139,17 @@ const OWNER_KEY = "502";
 function normalizeName(name) {
   return name.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
+
 window.sendMessage = function() {
   const reservedNames = ["eros", "erostaylor", "honeyvelvet"];
   let name = document.getElementById("name").value.trim() || "Anon";
   const message = document.getElementById("message").value;
   const nameNormalized = normalizeName(name);
 
+  // Reserved name check
   if(reservedNames.includes(nameNormalized)) {
-    const key = prompt("Enter owner key to use this name:");
+    let key = prompt("Enter owner key to use this name:");
+    key = key ? key.trim() : ""; // remove accidental spaces
     if(key !== OWNER_KEY) { // string comparison
       alert("This name is reserved. You cannot use it.");
       return;
