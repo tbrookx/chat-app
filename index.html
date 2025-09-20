@@ -2,20 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>🖥️ chat</title>
+<title>🖥️ Chat</title>
 <style>
+  /* Body & page */
   body {
     font-family: "MS Sans Serif", Geneva, sans-serif;
-    background: ##0077B6; /* classic teal desktop background */
+    background: #0077B6; /* classic teal desktop background */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #000;
+    margin: 0;
   }
 
-  /* Window frame */
+  /* Chat window container */
   #chat-window {
     width: 380px;
     border: 2px solid #000;
@@ -35,6 +37,7 @@
     user-select: none;
   }
 
+  /* Chat messages area */
   #chat-box {
     width: 100%;
     height: 300px;
@@ -59,7 +62,7 @@
     color: #000080;
   }
 
-  /* Inputs and button */
+  /* Input area */
   #input-area {
     display: flex;
     padding: 5px;
@@ -100,7 +103,7 @@
 <body>
 
 <div id="chat-window">
-  <div id="title-bar">chat</div>
+  <div id="title-bar">Chat</div>
   <div id="chat-box"></div>
   <div id="input-area">
     <input id="name" placeholder="Name">
@@ -129,17 +132,24 @@ const db = getDatabase(app);
 const messagesRef = ref(db, "messages");
 const chatBox = document.getElementById("chat-box");
 
-const OWNER_KEY = "502"; // <-- change this
+// Reserved names owner key
+const OWNER_KEY = "502"; 
+
+// Helper: normalize names (remove spaces & special chars, lowercase)
+function normalizeName(name) {
+  return name.replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
 
 window.sendMessage = function() {
-  const reservedNames = ["eros", "erostaylor", "eros taylor", "honeyvelvet", "Eros", "Eros Taylor", "EROS", "erostayo"];
+  const reservedNames = ["eros", "erostaylor", "erostaylor", "honeyvelvet"];
   let name = document.getElementById("name").value.trim() || "Anon";
   const message = document.getElementById("message").value;
-  const nameLower = name.toLowerCase();
+  const nameNormalized = normalizeName(name);
 
-  if(reservedNames.includes(nameLower)) {
+  // Reserved name check
+  if(reservedNames.includes(nameNormalized)) {
     const key = prompt("Enter owner key to use this name:");
-    if(key !== OWNER_KEY) {
+    if(key !== 502) {
       alert("This name is reserved. You cannot use it.");
       return;
     }
