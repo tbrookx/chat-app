@@ -25,13 +25,14 @@
   }
 
   #title-bar {
-    background: linear-gradient(to right, #000080, #0000ff);
-    color: #fff;
+    background: linear-gradient(90deg, #ff66cc, #66ccff, #ffff99);
+    color: #000;
     padding: 5px 10px;
     font-weight: bold;
     text-align: left;
     font-size: 14px;
     user-select: none;
+    text-shadow: 0 0 2px #fff;
   }
 
   #chat-box {
@@ -51,11 +52,33 @@
     margin-bottom: 2px;
     border-left: 2px solid #0000ff;
     background: linear-gradient(90deg, #f0f8ff, #e0e0e0);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .message::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+    transform: skewX(-25deg);
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -75%; }
+    100% { left: 125%; }
   }
 
   .user {
     font-weight: bold;
-    color: #000080;
+    background: linear-gradient(90deg, #ff66cc, #66ccff, #ffff99);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 2px #fff;
   }
 
   #input-area {
@@ -81,10 +104,11 @@
   button {
     padding: 2px 6px;
     border: 2px solid #000;
-    background: #c0c0c0;
+    background: linear-gradient(90deg, #ff66cc, #66ccff, #ffff99);
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
+    text-shadow: 0 0 2px #fff;
   }
 
   button:active {
@@ -111,7 +135,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, get, child } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCJi_zoww9atKKyXE2f1_Pbt0oq0ZIhJmM",
   authDomain: "deviascope-chat-app.firebaseapp.com",
@@ -127,15 +150,12 @@ const db = getDatabase(app);
 const messagesRef = ref(db, "messages");
 const chatBox = document.getElementById("chat-box");
 
-// Reserved names owner key
 const OWNER_KEY = "502";
 
-// Normalize names: lowercase, remove spaces and special chars
 function normalizeName(name) {
   return name.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
 
-// Display a message in chat box
 function displayMessage(msg) {
   const div = document.createElement("div");
   div.className = "message";
@@ -144,18 +164,16 @@ function displayMessage(msg) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Load existing messages from Firebase once
+// Load existing messages
 get(child(ref(db), 'messages')).then((snapshot) => {
   if (snapshot.exists()) {
-    const data = snapshot.val();
-    Object.values(data).forEach(msg => displayMessage(msg));
+    Object.values(snapshot.val()).forEach(msg => displayMessage(msg));
   }
 });
 
-// Listen for new messages in real-time
+// Real-time updates
 onChildAdded(messagesRef, (data) => {
-  const msg = data.val();
-  displayMessage(msg);
+  displayMessage(data.val());
 });
 
 window.sendMessage = function() {
@@ -165,9 +183,8 @@ window.sendMessage = function() {
   const nameNormalized = normalizeName(name);
 
   if(reservedNames.includes(nameNormalized)) {
-    let key = prompt("Enter owner key to use this name:") || "";
-    key = key.trim();
-    if (key !== OWNER_KEY) {
+    const key = prompt("Enter owner key to use this name:") || "";
+    if (key.trim() !== OWNER_KEY) {
       alert("This name is reserved. You cannot use it.");
       return;
     }
