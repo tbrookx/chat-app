@@ -109,7 +109,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, get, child } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -130,10 +130,33 @@ const chatBox = document.getElementById("chat-box");
 // Reserved names owner key
 const OWNER_KEY = "502";
 
-// Helper: normalize names
+// Normalize names: lowercase, remove spaces and special chars
 function normalizeName(name) {
   return name.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
+
+// Display a message in chat box
+function displayMessage(msg) {
+  const div = document.createElement("div");
+  div.className = "message";
+  div.innerHTML = `<span class="user">${msg.name}:</span> ${msg.message}`;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Load existing messages from Firebase once
+get(child(ref(db), 'messages')).then((snapshot) => {
+  if (snapshot.exists()) {
+    const data = snapshot.val();
+    Object.values(data).forEach(msg => displayMessage(msg));
+  }
+});
+
+// Listen for new messages in real-time
+onChildAdded(messagesRef, (data) => {
+  const msg = data.val();
+  displayMessage(msg);
+});
 
 window.sendMessage = function() {
   const reservedNames = ["eros", "erostaylor", "honeyvelvet"];
@@ -141,8 +164,7 @@ window.sendMessage = function() {
   const message = document.getElementById("message").value;
   const nameNormalized = normalizeName(name);
 
-  // Reserved name check
-  if (reservedNames.includes(nameNormalized)) {
+  if(reservedNames.includes(nameNormalized)) {
     let key = prompt("Enter owner key to use this name:") || "";
     key = key.trim();
     if (key !== OWNER_KEY) {
@@ -151,20 +173,11 @@ window.sendMessage = function() {
     }
   }
 
-  if (message.trim() !== "") {
+  if(message.trim() !== "") {
     push(messagesRef, { name, message });
     document.getElementById("message").value = "";
   }
 };
-
-onChildAdded(messagesRef, (data) => {
-  const msg = data.val();
-  const div = document.createElement("div");
-  div.className = "message";
-  div.innerHTML = `<span class="user">${msg.name}:</span> ${msg.message}`;
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-});
 </script>
 
 </body>
