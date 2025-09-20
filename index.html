@@ -149,8 +149,8 @@ window.sendMessage = function() {
   // Reserved name check
   if(reservedNames.includes(nameNormalized)) {
     let key = prompt("Enter owner key to use this name:");
-    key = key ? key.trim() : ""; // remove accidental spaces
-    if(key !== OWNER_KEY) { // string comparison
+    key = (key || "").trim();  // ensure string and trim spaces
+    if(key !== OWNER_KEY) { 
       alert("This name is reserved. You cannot use it.");
       return;
     }
